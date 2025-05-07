@@ -50,15 +50,37 @@ function Index() {
     value: string,
     setValue: (val: string) => void
   ) => {
-    let numValue = Number(value);
+    // 如果输入为空，允许继续输入
+    if (value === "") {
+      setValue("");
+      return;
+    }
+
+    const numValue = Number(value);
+    // 检查是否是有效数字
+    if (isNaN(numValue)) {
+      setValue("");
+      return;
+    }
+
     if (numValue > 1000) {
       setValue("1000.00");
     } else if (numValue < 0) {
       setValue("0.00");
     } else {
-      // 确保数值保持两位小数
-      setValue(Number(numValue).toFixed(2));
+      // 当失去焦点时才格式化为两位小数
+      setValue(value);
     }
+  };
+
+  // 添加新的处理函数，处理失去焦点时的格式化
+  const handlePriceBlur = (value: string, setValue: (val: string) => void) => {
+    if (value === "") {
+      setValue("0.00");
+      return;
+    }
+    const numValue = Number(value);
+    setValue(numValue.toFixed(2));
   };
 
   const onFinish = async (values: PriceFormData) => {
@@ -194,6 +216,11 @@ function Index() {
                       form.setFieldValue("fakePortcelain", newVal)
                     )
                   }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("fakePortcelain", newVal)
+                    )
+                  }
                 />
               </Form.Item>
 
@@ -208,6 +235,11 @@ function Index() {
                   placeholder="请输入价格"
                   onChange={(val) =>
                     handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("latex", newVal)
+                    )
+                  }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
                       form.setFieldValue("latex", newVal)
                     )
                   }
@@ -228,6 +260,11 @@ function Index() {
                       form.setFieldValue("plasterLine", newVal)
                     )
                   }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("plasterLine", newVal)
+                    )
+                  }
                 />
               </Form.Item>
 
@@ -242,6 +279,11 @@ function Index() {
                   placeholder="请输入价格"
                   onChange={(val) =>
                     handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("edgeDrop", newVal)
+                    )
+                  }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
                       form.setFieldValue("edgeDrop", newVal)
                     )
                   }
@@ -263,6 +305,11 @@ function Index() {
                       form.setFieldValue("realStone", newVal)
                     )
                   }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("realStone", newVal)
+                    )
+                  }
                 />
               </Form.Item>
 
@@ -280,6 +327,11 @@ function Index() {
                       form.setFieldValue("romanColumn", newVal)
                     )
                   }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("romanColumn", newVal)
+                    )
+                  }
                 />
               </Form.Item>
 
@@ -294,6 +346,11 @@ function Index() {
                   placeholder="请输入价格"
                   onChange={(val) =>
                     handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("roundColumn", newVal)
+                    )
+                  }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
                       form.setFieldValue("roundColumn", newVal)
                     )
                   }
