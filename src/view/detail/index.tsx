@@ -99,6 +99,7 @@ function DetailPage() {
         <div className="detail-card">
           <Card
             title="结算详情"
+            extra={originDetailData.projectName}
             style={{
               borderRadius: "16px",
               boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
