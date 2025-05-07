@@ -168,7 +168,6 @@ function Index() {
     try {
       setCalculating(true); // 开始计算时设置loading
       const calculateTotal = async () => {
-        let total = new Decimal(0);
         const insertData = {
           ...values,
           $fakePortcelain: "0",
@@ -217,14 +216,14 @@ function Index() {
           insertData.$plaster = plasterCost.toFixed(2);
 
           // 内墙总价
-          total = total
+          const innerTotal = new Decimal(0)
             .plus(fakePortcelainCost)
             .plus(latexCost)
             .plus(plasterLineCost)
             .plus(edgeDropCost)
             .plus(plasterCost);
 
-          insertData.innerAmount = total.toFixed(2);
+          insertData.innerAmount = innerTotal.toFixed(2);
         }
 
         // 外墙计算
@@ -254,16 +253,19 @@ function Index() {
           insertData.$railing = railingCost.toFixed(2);
 
           // 外墙总价
-          total = total
+          const outerTotal = new Decimal(0)
             .plus(realStoneCost)
             .plus(romanColumnCost)
             .plus(roundColumnCost)
             .plus(railingCost);
-          insertData.outerAmount = total.toFixed(2);
+          insertData.outerAmount = outerTotal.toFixed(2);
         }
 
         console.log("Insert Data:", insertData);
-        const totalAmount = total.toFixed(2); // 保留两位小数
+        const totalAmount = new Decimal(0)
+          .plus(insertData.innerAmount)
+          .plus(insertData.outerAmount)
+          .toFixed(2); // 保留两位小数
         let opreation: any = {};
         // 更新数据projectId如果存在
         if (projectInfo.projectId) {
