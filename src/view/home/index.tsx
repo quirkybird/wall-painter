@@ -1,55 +1,312 @@
-import useI18n from "@/hooks/i18n.ts";
-import './index.less'
-import MainLayout from "@/layout/main/MainLayout.tsx";
-import {Button} from "antd-mobile";
-import {useI18nStore} from "@/store/i18n.ts";
+import MainLayout from "@/layout/main/MainLayout";
+import "./index.less";
+import { Form, Input, Button, Card, Toast, List } from "antd-mobile";
+import { useEffect, useState } from "react";
+import { Tool } from "@icon-park/react";
+import { getUnitCost, updateUnitCost } from "@/api/unitSetting";
 
-function Index() {
-    const t = useI18n();
-    const i18nStore = useI18nStore()
-
-    return (
-        <>
-            <MainLayout>
-                <div className="index-container">
-                    <p>{t('index.title')}</p>
-                    <Button onClick={
-                        () => {
-                            i18nStore.changeLanguage('zh_CN')
-                        }
-                    }>简体中文</Button>
-                    <Button onClick={
-                        () => {
-                            i18nStore.changeLanguage('en_US')
-                        }
-                    }>English</Button>
-                    <p style={
-                        {
-                            fontSize: '12px',
-                        }
-                    }>Font size 12px</p>
-
-                    <p style={
-                        {
-                            fontSize: '14px',
-                        }
-                    }>Font size 14px</p>
-
-                    <p style={
-                        {
-                            fontSize: '16px',
-                        }
-                    }>Font size 16px</p>
-
-                    <p style={
-                        {
-                            fontSize: '18px',
-                        }
-                    }>Font size 18px</p>
-                </div>
-            </MainLayout>
-        </>
-    );
+interface PriceFormData {
+  id?: string; // 唯一标识符
+  // 内墙价格
+  fakePortcelain: number; // 仿瓷价格（元/平方）
+  latex: number; // 乳胶漆价格（元/平方）
+  plasterLine: number; // 石膏线价格（元/米）
+  edgeDrop: number; // 边吊价格（元/米）
+  // 外墙价格
+  realStone: number; // 真石漆价格（元/平方）
+  romanColumn: number; // 罗马柱价格（元/个）
+  roundColumn: number; // 圆柱子价格（元/个）
 }
 
-export default Index
+function Index() {
+  const [form] = Form.useForm<PriceFormData>();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [priceData, setPriceData] = useState<PriceFormData>({
+    fakePortcelain: 0,
+    latex: 0,
+    plasterLine: 0,
+    edgeDrop: 0,
+    realStone: 0,
+    romanColumn: 0,
+    roundColumn: 0,
+  });
+
+  useEffect(() => {
+    // 从API获取价格数据
+    getUnitCost()
+      .then((data: any) => {
+        if (data.length > 0) {
+          const priceData = data[0];
+          setPriceData(priceData);
+          form.setFieldsValue(priceData);
+        }
+      })
+      .catch((error) => {
+        console.error("获取价格数据失败:", error);
+      });
+  }, []);
+
+  const handlePriceChange = (
+    value: string,
+    setValue: (val: string) => void
+  ) => {
+    let numValue = Number(value);
+    if (numValue > 1000) {
+      setValue("1000.00");
+    } else if (numValue < 0) {
+      setValue("0.00");
+    } else {
+      // 确保数值保持两位小数
+      setValue(Number(numValue).toFixed(2));
+    }
+  };
+
+  const onFinish = async (values: PriceFormData) => {
+    console.log("表单数据:", values);
+    await updateUnitCost(priceData.id, values);
+    setPriceData(values);
+    setIsEditMode(false);
+    Toast.show({
+      content: "保存成功！",
+      position: "bottom",
+    });
+  };
+
+  const renderUnitSuffix = (unit: string) => (
+    <div
+      style={{
+        color: "#999",
+        fontSize: "14px",
+        marginLeft: "4px",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      {unit}
+    </div>
+  );
+
+  const renderPriceList = () => (
+    <div>
+      <List header="内墙项目价格">
+        <List.Item
+          extra={`${Number(priceData.fakePortcelain).toFixed(2)}元/平方`}
+        >
+          仿瓷
+        </List.Item>
+        <List.Item extra={`${Number(priceData.latex).toFixed(2)}元/平方`}>
+          乳胶漆
+        </List.Item>
+        <List.Item extra={`${Number(priceData.plasterLine).toFixed(2)}元/米`}>
+          石膏线
+        </List.Item>
+        <List.Item extra={`${Number(priceData.edgeDrop).toFixed(2)}元/米`}>
+          边吊
+        </List.Item>
+      </List>
+
+      <List header="外墙项目价格">
+        <List.Item extra={`${Number(priceData.realStone).toFixed(2)}元/平方`}>
+          真石漆
+        </List.Item>
+        <List.Item extra={`${Number(priceData.romanColumn).toFixed(2)}元/个`}>
+          罗马柱
+        </List.Item>
+        <List.Item extra={`${Number(priceData.roundColumn).toFixed(2)}元/个`}>
+          圆柱子
+        </List.Item>
+      </List>
+    </div>
+  );
+
+  return (
+    <MainLayout>
+      <div
+        style={{
+          backgroundColor: "#f5f5f5",
+          minHeight: "calc(100vh - 3.15rem)",
+          padding: "16px",
+        }}
+      >
+        <Card
+          style={{
+            borderRadius: "16px",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+            background: "#ffffff",
+          }}
+          extra={
+            <Tool
+              theme="two-tone"
+              size="24"
+              fill={isEditMode ? ["#333", "#FFC300"] : ["#333", "#fff"]}
+              style={{ fontSize: 24 }}
+              onClick={() => setIsEditMode(!isEditMode)}
+            />
+          }
+          title={
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>{isEditMode ? "装修单价设置" : "装修单价"}</span>
+            </div>
+          }
+        >
+          {isEditMode ? (
+            <Form
+              form={form}
+              layout="horizontal"
+              onFinish={onFinish}
+              initialValues={priceData}
+              style={
+                {
+                  "--border-top": "0px",
+                  "--border-bottom": "0px",
+                } as any
+              }
+              footer={
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <Button block onClick={() => setIsEditMode(false)}>
+                    取消
+                  </Button>
+                  <Button block type="submit" color="primary">
+                    保存设置
+                  </Button>
+                </div>
+              }
+            >
+              <Form.Header>内墙项目价格</Form.Header>
+              <Form.Item
+                name="fakePortcelain"
+                label="仿瓷"
+                extra={renderUnitSuffix("元/平方")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("fakePortcelain", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="latex"
+                label="乳胶漆"
+                extra={renderUnitSuffix("元/平方")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("latex", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="plasterLine"
+                label="石膏线"
+                extra={renderUnitSuffix("元/米")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("plasterLine", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="edgeDrop"
+                label="边吊"
+                extra={renderUnitSuffix("元/米")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("edgeDrop", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Header>外墙项目价格</Form.Header>
+              <Form.Item
+                name="realStone"
+                label="真石漆"
+                extra={renderUnitSuffix("元/平方")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("realStone", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="romanColumn"
+                label="罗马柱"
+                extra={renderUnitSuffix("元/个")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("romanColumn", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="roundColumn"
+                label="圆柱子"
+                extra={renderUnitSuffix("元/个")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("roundColumn", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+            </Form>
+          ) : (
+            <div>{renderPriceList()}</div>
+          )}
+        </Card>
+      </div>
+    </MainLayout>
+  );
+}
+
+export default Index;
