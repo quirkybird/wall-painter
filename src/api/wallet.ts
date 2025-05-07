@@ -48,7 +48,8 @@ export const fetchEngineeringCalculation = async () => {
   try {
     const { data: engineering_calculation, error } = await supabase
       .from("engineering_calculation")
-      .select("*");
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("获取数据时出错:", error);
@@ -68,7 +69,8 @@ export const fetchEngineeringCalculationForProject = async () => {
   try {
     const { data: engineering_calculation, error } = await supabase
       .from("engineering_calculation")
-      .select("projectName, projectId");
+      .select("projectName, projectId")
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("获取数据时出错:", error);
@@ -90,7 +92,6 @@ export const fetchCalcResById = async (id: string) => {
       .from("engineering_calculation")
       .select("*")
       .eq("projectId", id);
-
     if (error) {
       console.error("根据 ID 获取数据时出错:", error);
       throw error;

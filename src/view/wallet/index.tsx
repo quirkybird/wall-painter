@@ -134,6 +134,12 @@ function Index() {
           id="projectNameInput"
         />
       ),
+      afterShow: () => {
+        const input = document.getElementById(
+          "projectNameInput"
+        ) as HTMLInputElement;
+        input?.focus();
+      },
       onConfirm: async () => {
         const input = document.getElementById(
           "projectNameInput"
@@ -521,12 +527,12 @@ function Index() {
           borderTopLeftRadius: "12px",
           borderTopRightRadius: "12px",
           minHeight: "40vh",
+          maxHeight: "40vh",
         }}
       >
         <div
           style={{
             padding: "16px",
-            position: "relative",
             borderBottom: "0.5px solid #eee",
           }}
         >
@@ -549,7 +555,7 @@ function Index() {
           </div>
         </div>
 
-        <List>
+        <List style={{ overflow: "auto", height: "30vh" }}>
           {historyProjects.map((project: any) => (
             <List.Item
               key={project.projectId}
