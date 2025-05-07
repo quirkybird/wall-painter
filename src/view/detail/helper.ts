@@ -1,69 +1,81 @@
 export const transformProjectData = (data: any) => {
-  const innerWallItems = [
-    {
-      name: "仿瓷",
-      price: data.fakePortcelain,
-      quantity: data.fakePortcelainQuantity,
-      unit: data.fakePortcelainUnit,
-      subtotal: data.$fakePortcelain,
-    },
-    {
-      name: "乳胶漆",
-      price: data.latex,
-      quantity: data.latexQuantity,
-      unit: data.latexUnit,
-      subtotal: data.$latex,
-    },
-    {
-      name: "石膏线",
-      price: data.plasterLine,
-      quantity: data.plasterLineQuantity,
-      unit: data.plasterLineUnit,
-      subtotal: data.$plasterLine,
-    },
-    {
-      name: "边吊",
-      price: data.edgeDrop,
-      quantity: data.edgeDropQuantity,
-      unit: data.edgeDropUnit,
-      subtotal: data.$edgeDrop,
-    },
-  ];
-
-  const outerWallItems = [
-    {
-      name: "真石漆",
-      price: data.realStone,
-      quantity: data.realStoneQuantity,
-      unit: data.realStoneUnit,
-      subtotal: data.$realStone,
-    },
-    {
-      name: "罗马柱",
-      price: data.romanColumn,
-      quantity: data.romanColumnQuantity,
-      unit: data.romanColumnUnit,
-      subtotal: data.$romanColumn,
-    },
-    {
-      name: "圆柱子",
-      price: data.roundColumn,
-      quantity: data.roundColumnQuantity,
-      unit: data.roundColumnUnit,
-      subtotal: data.$roundColumn,
-    },
-  ];
-
-  return [
+  const sections = [
     {
       title: "内墙工程",
-      sectionTotal: data.innerAmount,
-      items: innerWallItems,
+      items: [
+        {
+          name: "仿瓷",
+          price: Number(data.fakePortcelain),
+          quantity: Number(data.fakePortcelainQuantity),
+          unit: "平方",
+          subtotal: Number(data.$fakePortcelain),
+        },
+        {
+          name: "乳胶漆",
+          price: Number(data.latex),
+          quantity: Number(data.latexQuantity),
+          unit: "平方",
+          subtotal: Number(data.$latex),
+        },
+        {
+          name: "石膏线",
+          price: Number(data.plasterLine),
+          quantity: Number(data.plasterLineQuantity),
+          unit: "米",
+          subtotal: Number(data.$plasterLine),
+        },
+        {
+          name: "边吊",
+          price: Number(data.edgeDrop),
+          quantity: Number(data.edgeDropQuantity),
+          unit: "米",
+          subtotal: Number(data.$edgeDrop),
+        },
+        {
+          name: "石膏",
+          price: Number(data.plaster),
+          quantity: Number(data.plasterQuantity),
+          unit: "包",
+          subtotal: Number(data.$plaster),
+        },
+      ],
+      sectionTotal: Number(data.innerAmount),
     },
     {
       title: "外墙工程",
-      sectionTotal: data.outerAmount,
-      items: outerWallItems,
+      items: [
+        {
+          name: "真石漆",
+          price: Number(data.realStone),
+          quantity: Number(data.realStoneQuantity),
+          unit: "平方",
+          subtotal: Number(data.$realStone),
+        },
+        {
+          name: "罗马柱",
+          price: Number(data.romanColumn),
+          quantity: Number(data.romanColumnQuantity),
+          unit: "个",
+          subtotal: Number(data.$romanColumn),
+        },
+        {
+          name: "圆柱子",
+          price: Number(data.roundColumn),
+          quantity: Number(data.roundColumnQuantity),
+          unit: "个",
+          subtotal: Number(data.$roundColumn),
+        },
+        {
+          name: "栏杆",
+          price: Number(data.railing),
+          quantity: Number(data.railingQuantity),
+          unit: "米",
+          subtotal: Number(data.$railing),
+        },
+      ],
+      sectionTotal: Number(data.outerAmount),
     },
   ];
+
+  return sections;
 };

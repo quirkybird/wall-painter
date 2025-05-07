@@ -12,10 +12,12 @@ interface PriceFormData {
   latex: number; // 乳胶漆价格（元/平方）
   plasterLine: number; // 石膏线价格（元/米）
   edgeDrop: number; // 边吊价格（元/米）
+  plaster: number; // 石膏价格（元/包）
   // 外墙价格
   realStone: number; // 真石漆价格（元/平方）
   romanColumn: number; // 罗马柱价格（元/个）
   roundColumn: number; // 圆柱子价格（元/个）
+  railing: number; // 栏杆价格（元/米）
 }
 
 function Index() {
@@ -26,9 +28,11 @@ function Index() {
     latex: 0,
     plasterLine: 0,
     edgeDrop: 0,
+    plaster: 0, // 新增
     realStone: 0,
     romanColumn: 0,
     roundColumn: 0,
+    railing: 0, // 新增
   });
 
   useEffect(() => {
@@ -125,6 +129,9 @@ function Index() {
         <List.Item extra={`${Number(priceData.edgeDrop).toFixed(2)}元/米`}>
           边吊
         </List.Item>
+        <List.Item extra={`${Number(priceData.plaster).toFixed(2)}元/包`}>
+          石膏
+        </List.Item>
       </List>
 
       <List header="外墙项目价格">
@@ -136,6 +143,9 @@ function Index() {
         </List.Item>
         <List.Item extra={`${Number(priceData.roundColumn).toFixed(2)}元/个`}>
           圆柱子
+        </List.Item>
+        <List.Item extra={`${Number(priceData.railing).toFixed(2)}元/米`}>
+          栏杆
         </List.Item>
       </List>
     </div>
@@ -290,6 +300,28 @@ function Index() {
                 />
               </Form.Item>
 
+              <Form.Item
+                name="plaster"
+                label="石膏"
+                extra={renderUnitSuffix("元/包")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("plaster", newVal)
+                    )
+                  }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("plaster", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
               <Form.Header>外墙项目价格</Form.Header>
               <Form.Item
                 name="realStone"
@@ -352,6 +384,28 @@ function Index() {
                   onBlur={(e) =>
                     handlePriceBlur(e.target.value, (newVal) =>
                       form.setFieldValue("roundColumn", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="railing"
+                label="栏杆"
+                extra={renderUnitSuffix("元/米")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("railing", newVal)
+                    )
+                  }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("railing", newVal)
                     )
                   }
                 />

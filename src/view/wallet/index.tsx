@@ -28,10 +28,12 @@ interface CalculationFormData {
   latexQuantity: number; // 乳胶漆面积（平方）
   plasterLineQuantity: number; // 石膏线长度（米）
   edgeDropQuantity: number; // 边吊长度（米）
+  plasterQuantity: number; // 石膏数量（包）
   // 外墙数量
   realStoneQuantity: number; // 真石漆面积（平方）
   romanColumnQuantity: number; // 罗马柱数量（个）
   roundColumnQuantity: number; // 圆柱子数量（个）
+  railingQuantity: number; // 栏杆长度（米）
 }
 
 function Index() {
@@ -173,9 +175,11 @@ function Index() {
           $latex: "0",
           $plasterLine: "0",
           $edgeDrop: "0",
+          $plaster: "0",
           $realStone: "0",
           $romanColumn: "0",
           $roundColumn: "0",
+          $railing: "0",
           innerAmount: "0",
           outerAmount: "0",
         };
@@ -206,12 +210,19 @@ function Index() {
           );
           insertData.$edgeDrop = edgeDropCost.toFixed(2);
 
+          // 石膏价格计算
+          const plasterCost = new Decimal(values.plasterQuantity || 0).times(
+            new Decimal(priceData?.plaster || 0)
+          );
+          insertData.$plaster = plasterCost.toFixed(2);
+
           // 内墙总价
           total = total
             .plus(fakePortcelainCost)
             .plus(latexCost)
             .plus(plasterLineCost)
-            .plus(edgeDropCost);
+            .plus(edgeDropCost)
+            .plus(plasterCost);
 
           insertData.innerAmount = total.toFixed(2);
         }
@@ -236,11 +247,18 @@ function Index() {
           ).times(new Decimal(priceData?.roundColumn || 0));
           insertData.$roundColumn = roundColumnCost.toFixed(2);
 
+          // 栏杆价格计算
+          const railingCost = new Decimal(values.railingQuantity || 0).times(
+            new Decimal(priceData?.railing || 0)
+          );
+          insertData.$railing = railingCost.toFixed(2);
+
           // 外墙总价
           total = total
             .plus(realStoneCost)
             .plus(romanColumnCost)
-            .plus(roundColumnCost);
+            .plus(roundColumnCost)
+            .plus(railingCost);
           insertData.outerAmount = total.toFixed(2);
         }
 
@@ -461,6 +479,22 @@ function Index() {
                     }
                   />
                 </Form.Item>
+
+                <Form.Item
+                  name="plasterQuantity"
+                  label="石膏数量"
+                  extra={renderUnitSuffix("包")}
+                >
+                  <Input
+                    type="number"
+                    placeholder="请输入数量"
+                    onChange={(val) =>
+                      handleQuantityChange(val, (newVal) =>
+                        form.setFieldValue("plasterQuantity", newVal)
+                      )
+                    }
+                  />
+                </Form.Item>
               </>
             )}
 
@@ -510,6 +544,22 @@ function Index() {
                     onChange={(val) =>
                       handleQuantityChange(val, (newVal) =>
                         form.setFieldValue("roundColumnQuantity", newVal)
+                      )
+                    }
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="railingQuantity"
+                  label="栏杆长度"
+                  extra={renderUnitSuffix("米")}
+                >
+                  <Input
+                    type="number"
+                    placeholder="请输入长度"
+                    onChange={(val) =>
+                      handleQuantityChange(val, (newVal) =>
+                        form.setFieldValue("railingQuantity", newVal)
                       )
                     }
                   />
