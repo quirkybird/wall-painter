@@ -149,13 +149,13 @@ function DetailPage() {
             </div>
           </Card>
         </div>
-        <Button
+        {/* <Button
           color="primary"
           onClick={handleExportImage}
           style={{ marginBlock: "12px", width: "100%" }}
         >
           导出结算详情
-        </Button>
+        </Button> */}
       </div>
     </MainLayout>
   );
