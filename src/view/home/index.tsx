@@ -13,6 +13,7 @@ interface PriceFormData {
   plasterLine: number; // 石膏线价格（元/米）
   edgeDrop: number; // 边吊价格（元/米）
   plaster: number; // 石膏价格（元/包）
+  baseboard: number; // 踢脚线价格（元/米）
   // 外墙价格
   realStone: number; // 真石漆价格（元/平方）
   romanColumn: number; // 罗马柱价格（元/个）
@@ -29,6 +30,7 @@ function Index() {
     plasterLine: 0,
     edgeDrop: 0,
     plaster: 0, // 新增
+    baseboard: 0, // 新增
     realStone: 0,
     romanColumn: 0,
     roundColumn: 0,
@@ -131,6 +133,9 @@ function Index() {
         </List.Item>
         <List.Item extra={`${Number(priceData.plaster).toFixed(2)}元/包`}>
           石膏
+        </List.Item>
+        <List.Item extra={`${Number(priceData.baseboard).toFixed(2)}元/米`}>
+          踢脚线
         </List.Item>
       </List>
 
@@ -317,6 +322,28 @@ function Index() {
                   onBlur={(e) =>
                     handlePriceBlur(e.target.value, (newVal) =>
                       form.setFieldValue("plaster", newVal)
+                    )
+                  }
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="baseboard"
+                label="踢脚线"
+                extra={renderUnitSuffix("元/米")}
+                rules={[{ required: true, message: "请输入价格" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入价格"
+                  onChange={(val) =>
+                    handlePriceChange(val, (newVal) =>
+                      form.setFieldValue("baseboard", newVal)
+                    )
+                  }
+                  onBlur={(e) =>
+                    handlePriceBlur(e.target.value, (newVal) =>
+                      form.setFieldValue("baseboard", newVal)
                     )
                   }
                 />

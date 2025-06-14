@@ -29,6 +29,7 @@ interface CalculationFormData {
   plasterLineQuantity: number; // 石膏线长度（米）
   edgeDropQuantity: number; // 边吊长度（米）
   plasterQuantity: number; // 石膏数量（包）
+  baseboardQuantity: number; // 踢脚线长度（米）
   // 外墙数量
   realStoneQuantity: number; // 真石漆面积（平方）
   romanColumnQuantity: number; // 罗马柱数量（个）
@@ -175,6 +176,7 @@ function Index() {
           $plasterLine: "0",
           $edgeDrop: "0",
           $plaster: "0",
+          $baseboard: "0",
           $realStone: "0",
           $romanColumn: "0",
           $roundColumn: "0",
@@ -215,13 +217,20 @@ function Index() {
           );
           insertData.$plaster = plasterCost.toFixed(2);
 
+          // 踢脚线价格计算
+          const baseboardCost = new Decimal(
+            values.baseboardQuantity || 0
+          ).times(new Decimal(priceData?.baseboard || 0));
+          insertData.$baseboard = baseboardCost.toFixed(2);
+
           // 内墙总价
           const innerTotal = new Decimal(0)
             .plus(fakePortcelainCost)
             .plus(latexCost)
             .plus(plasterLineCost)
             .plus(edgeDropCost)
-            .plus(plasterCost);
+            .plus(plasterCost)
+            .plus(baseboardCost);
 
           insertData.innerAmount = innerTotal.toFixed(2);
         }
@@ -493,6 +502,22 @@ function Index() {
                     onChange={(val) =>
                       handleQuantityChange(val, (newVal) =>
                         form.setFieldValue("plasterQuantity", newVal)
+                      )
+                    }
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="baseboardQuantity"
+                  label="踢脚线长度"
+                  extra={renderUnitSuffix("米")}
+                >
+                  <Input
+                    type="number"
+                    placeholder="请输入长度"
+                    onChange={(val) =>
+                      handleQuantityChange(val, (newVal) =>
+                        form.setFieldValue("baseboardQuantity", newVal)
                       )
                     }
                   />

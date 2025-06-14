@@ -38,6 +38,13 @@ export const transformProjectData = (data: any) => {
           unit: "包",
           subtotal: Number(data.$plaster),
         },
+        {
+          name: "踢脚线",
+          price: Number(data.baseboard),
+          quantity: Number(data.baseboardQuantity),
+          unit: "米",
+          subtotal: Number(data.$baseboard),
+        },
       ],
       sectionTotal: Number(data.innerAmount),
     },
