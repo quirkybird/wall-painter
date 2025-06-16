@@ -1,11 +1,11 @@
 import MainLayout from "@/layout/main/MainLayout";
-import { Card, List, Button } from "antd-mobile";
-import { useParams } from "react-router-dom";
+import { Card, List, Button, Toast, Modal } from "antd-mobile";
+import { useParams, useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import "./index.less";
 import { useEffect, useState } from "react";
 import { transformProjectData } from "./helper";
-import { fetchCalcResById } from "@/api/wallet";
+import { deleteCalcRes, fetchCalcResById } from "@/api/wallet";
 import { getUnitCost } from "@/api/unitSetting";
 
 interface DetailItem {
@@ -24,6 +24,7 @@ interface DetailSection {
 
 function DetailPage() {
   const { id } = useParams<{ id: string | undefined }>();
+  const nav = useNavigate();
   const [detailData, setDetailData] = useState<DetailSection[]>([]);
   const [originDetailData, setOriginDetailData] = useState<any>({});
 
@@ -54,6 +55,24 @@ function DetailPage() {
         console.error("获取价格数据失败:", error);
       });
   }, []);
+
+  // 处理数据删除
+  const handleDeleteItem = async () => {
+    Modal.confirm({
+      title: "确认删除",
+      content: "确认删除吗？删除后不可恢复",
+      onConfirm: async () => {
+        await deleteCalcRes(id as string);
+        Toast.show({
+          content: "删除成功",
+          position: "center",
+        });
+        nav("/history", {
+          replace: true, // 替换当前路由，避免返回到已删除的详情页
+        });
+      },
+    });
+  };
 
   const handleExportImage = async () => {
     const element = document.querySelector(".detail-card");
@@ -156,6 +175,13 @@ function DetailPage() {
         >
           导出结算详情
         </Button> */}
+        <Button
+          color="danger"
+          onClick={handleDeleteItem}
+          style={{ marginBlock: "12px", width: "100%" }}
+        >
+          删除
+        </Button>
       </div>
     </MainLayout>
   );

@@ -96,7 +96,7 @@ function Index() {
     setIsEditMode(false);
     Toast.show({
       content: "保存成功！",
-      position: "bottom",
+      position: "center",
     });
   };
 

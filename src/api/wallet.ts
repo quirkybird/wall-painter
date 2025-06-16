@@ -98,3 +98,29 @@ export const fetchCalcResById = async (id: string) => {
     throw err;
   }
 };
+
+// 删除工程计算表中的数据
+export const deleteCalcRes = async (projectId: string) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/engineering-calculation/delete/${projectId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("数据删除成功:", data);
+    return data;
+  } catch (err) {
+    console.error("意外错误:", err);
+    throw err;
+  }
+};
