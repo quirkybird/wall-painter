@@ -92,7 +92,7 @@ function Index() {
   const onFinish = async (values: PriceFormData) => {
     console.log("表单数据:", values);
     await updateUnitCost(priceData.id, values);
-    setPriceData(values);
+    setPriceData({ id: priceData.id, ...values });
     setIsEditMode(false);
     Toast.show({
       content: "保存成功！",

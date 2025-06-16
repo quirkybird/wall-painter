@@ -1,14 +1,36 @@
-import supabase from "@/http/supabase";
+const { VITE_BASE_URL: BASE_URL } = import.meta.env;
 
 export const getUnitCost = async () => {
-  let { data: unit_cost, error } = await supabase.from("unit_cost").select("*");
-  if (error) {
+  try {
+    const response = await fetch(`${BASE_URL}/unit-cost`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
     console.error("Error fetching unit cost:", error);
     return [];
   }
-  return unit_cost;
 };
 
 export const updateUnitCost = async (id: any, newUnitCost: any) => {
-  await supabase.from("unit_cost").update(newUnitCost).eq("id", id);
+  try {
+    const response = await fetch(`${BASE_URL}/unit-cost/update`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, ...newUnitCost }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating unit cost:", error);
+    throw error;
+  }
 };
